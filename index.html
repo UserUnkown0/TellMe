@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes Anónimos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Envía un Mensaje Anónimo</h1>
+        <form id="anonForm">
+            <textarea id="message" placeholder="Escribe tu mensaje..."></textarea>
+            <button type="submit">Enviar</button>
+        </form>
+        <p class="message" id="confirmation"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('anonForm');
+        const confirmation = document.getElementById('confirmation');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const message = document.getElementById('message').value.trim();
+
+            if (message === '') {
+                confirmation.textContent = 'Por favor, escribe un mensaje.';
+                confirmation.style.color = '#dc3545'; // Rojo para error
+            } else {
+                // Guardar el mensaje en localStorage
+                let messages = JSON.parse(localStorage.getItem('messages')) || [];
+                messages.push(message);
+                localStorage.setItem('messages', JSON.stringify(messages));
+
+                confirmation.textContent = '¡Mensaje enviado!';
+                confirmation.style.color = '#28a745'; // Verde para éxito
+
+                // Limpiar el campo de texto
+                document.getElementById('message').value = '';
+            }
+        });
+    </script>
+
+</body>
+</html>
+

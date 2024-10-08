@@ -1,145 +1,184 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensajes Anónimos</title>
+    <title>Inbox</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: #f0f2f5;
         }
         .container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
             padding: 20px;
-            width: 300px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .menu {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            background-color: #4A90E2;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .menu a {
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .menu a:hover {
+            background-color: #357ABD;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .content {
+            margin-top: 20px;
+        }
+        h2 {
+            color: #333;
             text-align: center;
         }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .avatar-container {
-            position: relative;
-            margin: 20px 0;
-        }
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #007bff;
-        }
-        .marker {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #28a745;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .message-container {
-            margin-top: 20px;
-            padding: 10px;
-            border: 2px solid #ff6347; /* Borde tomate claro */
-            border-radius: 8px;
-            background-color: #fff0f0; /* Fondo claro para el contenedor de mensajes */
+        .inbox {
+            margin-top: 30px;
         }
         .message {
-            font-size: 14px;
-            color: #28a745;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background-color: #ffcfdf;
+            color: #333;
+            border: 2px solid tomato; /* Borde tomate claro */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .message:hover {
+            background-color: #ffb7c5;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .arrow {
+            font-size: 24px;
+            color: #333;
+            transition: color 0.2s ease;
+        }
+        .message:hover .arrow {
+            color: #ff3b6f;
         }
         .no-messages {
-            font-size: 14px;
-            color: #dc3545; /* Rojo para mensaje de error */
+            color: #555;
+            font-size: 18px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 2px dashed tomato; /* Borde de no mensajes */
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
         .new-message {
             font-weight: bold;
             color: #007bff; /* Color azul para el texto de nuevo mensaje */
+            text-align: center;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Mensajes Anónimos</h1>
+        <nav class="menu">
+            <a href="#viewers">Viewers</a>
+            <a href="#play">Play</a>
+            <a href="#inbox">Inbox</a>
+            <a href="#settings">Settings</a>
+        </nav>
 
-        <!-- Contenedor de mensajes -->
-        <div id="inboxMessages" class="message-container"></div>
-
-        <div class="avatar-container">
-            <div class="marker">Nuevo mensaje</div>
-            <img src="https://via.placeholder.com/50" alt="Avatar" class="avatar">
+        <div class="content" id="viewers">
+            <h2>Viewers</h2>
+            <p>This section will display viewers.</p>
         </div>
 
-        <form id="anonForm">
-            <textarea id="message" placeholder="Escribe tu mensaje..."></textarea>
-            <button type="submit">Enviar</button>
-        </form>
-        <p class="message" id="confirmation"></p>
+        <div class="content" id="play" style="display: none;">
+            <h2>Play</h2>
+            <p>This section will have the play feature.</p>
+        </div>
+
+        <!-- Sección Inbox -->
+        <div class="content" id="inbox" style="display: none;">
+            <h2>Inbox</h2>
+
+            <div class="inbox" id="inboxMessages">
+                <!-- Aquí se mostrarán los mensajes si hay, o el texto de no hay mensajes -->
+            </div>
+        </div>
+
+        <div class="content" id="settings" style="display: none;">
+            <h2>Settings</h2>
+            <p>This section will contain configuration options.</p>
+        </div>
     </div>
 
     <script>
-        const form = document.getElementById('anonForm');
-        const confirmation = document.getElementById('confirmation');
+        const menuLinks = document.querySelectorAll('.menu a');
+        const sections = document.querySelectorAll('.content');
         const inboxMessages = document.getElementById('inboxMessages');
 
-        // Función para mostrar los mensajes en el inbox
+        // Función para mostrar los mensajes o el texto de no hay mensajes
         function displayInboxMessages() {
-            const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            inboxMessages.innerHTML = ''; // Limpiar mensajes previos
+            let messages = JSON.parse(localStorage.getItem('messages')) || []; // Cargar mensajes de localStorage
+            inboxMessages.innerHTML = '';  // Limpiamos los mensajes
 
             if (messages.length > 0) {
                 // Mostrar contenedor de nuevo mensaje
-                const messageDiv = document.createElement('div');
-                messageDiv.innerHTML = `
-                    <span class="new-message">Nuevo mensaje</span>
-                `;
-                inboxMessages.appendChild(messageDiv);
+                const newMessageDiv = document.createElement('div');
+                newMessageDiv.classList.add('new-message');
+                newMessageDiv.innerText = `Tienes ${messages.length} nuevo(s) mensaje(s)`;
+                inboxMessages.appendChild(newMessageDiv);
+
+                messages.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message');
+                    messageDiv.innerHTML = `
+                        <span>${message}</span>
+                        <span class="arrow">&#10148;</span>
+                    `;
+                    inboxMessages.appendChild(messageDiv);
+                });
             } else {
-                inboxMessages.innerHTML = '<div class="no-messages">No tienes mensajes nuevos.</div>';
+                inboxMessages.innerHTML = '<div class="no-messages">No hay mensajes aún.</div>';
             }
         }
 
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const message = document.getElementById('message').value;
+        // Manejamos la navegación entre secciones
+        menuLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                sections.forEach(section => section.style.display = 'none');
+                const target = this.getAttribute('href').substring(1);
+                document.getElementById(target).style.display = 'block';
 
-            if (message.trim() === '') {
-                confirmation.textContent = 'Por favor, escribe un mensaje.';
-                confirmation.style.color = '#dc3545'; // Rojo para error
-            } else {
-                confirmation.textContent = '¡Mensaje enviado!';
-                confirmation.style.color = '#28a745'; // Verde para éxito
-
-                // Guardar mensaje en localStorage
-                const messages = JSON.parse(localStorage.getItem('messages')) || [];
-                messages.push(message);
-                localStorage.setItem('messages', JSON.stringify(messages));
-
-                // Limpiar el campo de texto
-                document.getElementById('message').value = '';
-
-                // Mostrar mensajes al enviar
-                displayInboxMessages();
-            }
+                if (target === 'inbox') {
+                    displayInboxMessages(); // Mostrar mensajes cuando se accede a la bandeja de entrada
+                }
+            });
         });
 
-        // Cargar mensajes al inicio
-        displayInboxMessages();
+        // Cargar mensajes al inicio si estamos en el inbox
+        if (window.location.hash === '#inbox') {
+            displayInboxMessages();
+        }
     </script>
-
 </body>
 </html>
+

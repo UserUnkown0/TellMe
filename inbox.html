@@ -52,13 +52,13 @@
         }
         .message {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             padding: 15px 20px;
             margin-bottom: 15px;
             background-color: #ffcfdf;
             color: #333;
-            border: 2px solid tomato;
+            border: 2px solid tomato; /* Borde tomate claro */
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -83,9 +83,33 @@
             text-align: center;
             padding: 20px;
             background-color: #f9f9f9;
-            border: 2px dashed tomato;
+            border: 2px dashed tomato; /* Borde de no mensajes */
             border-radius: 10px;
             margin-bottom: 20px;
+        }
+        .avatar {
+            width: 40px;  /* Tamaño del avatar */
+            height: 40px; /* Tamaño del avatar */
+            border-radius: 50%; /* Hace que el avatar sea redondo */
+            margin-right: 15px; /* Espacio entre el avatar y el texto */
+            background-color: #ccc; /* Color de fondo del avatar, puede ser una imagen o un color */
+            display: inline-block;
+            position: relative; /* Para posicionar el marcador */
+        }
+        .marker {
+            width: 10px;
+            height: 10px;
+            background-color: tomato; /* Color del marcador */
+            border-radius: 50%;
+            position: absolute;
+            top: -5px; /* Ajustar según sea necesario */
+            left: 15px; /* Ajustar según sea necesario */
+        }
+        .timestamp {
+            font-size: 12px; /* Tamaño de la fuente para el tiempo */
+            color: #666; /* Color del texto del tiempo */
+            margin-top: 5px; /* Espacio entre el mensaje y el tiempo */
+            text-align: center; /* Centrar el texto */
         }
     </style>
 </head>
@@ -129,23 +153,53 @@
         const sections = document.querySelectorAll('.content');
         const inboxMessages = document.getElementById('inboxMessages');
 
-        // Mensajes cargados dinámicamente, ahora vacíos por defecto
-        let messages = []; // Inicialmente sin mensajes
+        // Función para calcular el tiempo desde el envío
+        function timeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) return interval + " años ago";
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) return interval + " meses ago";
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) return interval + " días ago";
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) return interval + " horas ago";
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) return interval + " minutos ago";
+            return "ahora";
+        }
+
+        // Cargar los mensajes de localStorage
+        let messages = JSON.parse(localStorage.getItem('messages')) || [];
 
         // Función para mostrar los mensajes o el texto de no hay mensajes
         function displayInboxMessages() {
             inboxMessages.innerHTML = '';  // Limpiamos los mensajes
             if (messages.length > 0) {
-                messages.forEach(message => {
+                messages.forEach((messageText, index) => {
                     const messageDiv = document.createElement('div');
                     messageDiv.classList.add('message');
+
+                    const avatarDiv = document.createElement('div');
+                    avatarDiv.classList.add('avatar');
+
+                    const markerDiv = document.createElement('div');
+                    markerDiv.classList.add('marker');
+
+                    const timestamp = new Date();
+
                     messageDiv.innerHTML = `
-                        <span>Nuevo mensaje</span>
+                        <div style="display: flex; align-items: center;">
+                            ${avatarDiv.outerHTML}
+                            <span>${messageText}</span>
+                        </div>
+                        <div class="timestamp">${timeAgo(timestamp)}</div>
                         <span class="arrow">&rarr;</span>
                     `;
-                    messageDiv.addEventListener('click', function() {
-                        window.location.href = message.url;  // Redirigir al contenido del mensaje
-                    });
+
+                    avatarDiv.appendChild(markerDiv);
+                    messageDiv.appendChild(avatarDiv);
+
                     inboxMessages.appendChild(messageDiv);
                 });
             } else {
@@ -161,16 +215,14 @@
 
         // Función para manejar los clicks en el menú
         menuLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                sections.forEach(section => section.style.display = 'none');
-                const target = document.querySelector(this.getAttribute('href'));
-                target.style.display = 'block';
+            link.addEventListener('click', function() {
+                sections.forEach(section => {
+                    section.style.display = 'none'; // Ocultamos todas las secciones
+                });
+                document.querySelector(link.getAttribute('href')).style.display = 'block'; // Mostramos la sección correspondiente
             });
         });
     </script>
-
 </body>
 </html>
-
 

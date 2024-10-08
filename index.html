@@ -28,62 +28,40 @@
             margin-bottom: 20px;
             color: #333;
         }
-        .avatar-container {
-            position: relative;
-            margin: 20px 0;
-        }
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #007bff;
-        }
-        .marker {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #28a745;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .message-container {
-            margin-top: 20px;
+        textarea {
+            width: 100%;
+            height: 150px;
             padding: 10px;
-            border: 2px solid #ff6347; /* Borde tomate claro */
-            border-radius: 8px;
-            background-color: #fff0f0; /* Fondo claro para el contenedor de mensajes */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
         .message {
+            margin-top: 20px;
             font-size: 14px;
             color: #28a745;
-        }
-        .no-messages {
-            font-size: 14px;
-            color: #dc3545; /* Rojo para mensaje de error */
-        }
-        .new-message {
-            font-weight: bold;
-            color: #007bff; /* Color azul para el texto de nuevo mensaje */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Mensajes Anónimos</h1>
-
-        <!-- Contenedor de mensajes -->
-        <div id="inboxMessages" class="message-container"></div>
-
-        <div class="avatar-container">
-            <div class="marker">Nuevo mensaje</div>
-            <img src="https://via.placeholder.com/50" alt="Avatar" class="avatar">
-        </div>
-
+        <h1>Envía un Mensaje Anónimo</h1>
         <form id="anonForm">
             <textarea id="message" placeholder="Escribe tu mensaje..."></textarea>
             <button type="submit">Enviar</button>
@@ -94,51 +72,27 @@
     <script>
         const form = document.getElementById('anonForm');
         const confirmation = document.getElementById('confirmation');
-        const inboxMessages = document.getElementById('inboxMessages');
-
-        // Función para mostrar los mensajes en el inbox
-        function displayInboxMessages() {
-            const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            inboxMessages.innerHTML = ''; // Limpiar mensajes previos
-
-            if (messages.length > 0) {
-                // Mostrar contenedor de nuevo mensaje
-                const messageDiv = document.createElement('div');
-                messageDiv.innerHTML = `
-                    <span class="new-message">Nuevo mensaje</span>
-                `;
-                inboxMessages.appendChild(messageDiv);
-            } else {
-                inboxMessages.innerHTML = '<div class="no-messages">No tienes mensajes nuevos.</div>';
-            }
-        }
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-            const message = document.getElementById('message').value;
+            const message = document.getElementById('message').value.trim();
 
-            if (message.trim() === '') {
+            if (message === '') {
                 confirmation.textContent = 'Por favor, escribe un mensaje.';
                 confirmation.style.color = '#dc3545'; // Rojo para error
             } else {
-                confirmation.textContent = '¡Mensaje enviado!';
-                confirmation.style.color = '#28a745'; // Verde para éxito
-
-                // Guardar mensaje en localStorage
-                const messages = JSON.parse(localStorage.getItem('messages')) || [];
+                // Guardar el mensaje en localStorage
+                let messages = JSON.parse(localStorage.getItem('messages')) || [];
                 messages.push(message);
                 localStorage.setItem('messages', JSON.stringify(messages));
 
+                confirmation.textContent = '¡Mensaje enviado!';
+                confirmation.style.color = '#28a745'; // Verde para éxito
+
                 // Limpiar el campo de texto
                 document.getElementById('message').value = '';
-
-                // Mostrar mensajes al enviar
-                displayInboxMessages();
             }
         });
-
-        // Cargar mensajes al inicio
-        displayInboxMessages();
     </script>
 
 </body>

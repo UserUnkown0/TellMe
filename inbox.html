@@ -50,48 +50,39 @@
         .inbox {
             margin-top: 30px;
         }
-        .message {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            background-color: #ffcfdf;
-            color: #333;
-            border: 2px solid tomato; /* Borde tomate claro */
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .message:hover {
-            background-color: #ffb7c5;
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-        }
-        .arrow {
-            font-size: 24px;
-            color: #333;
-            transition: color 0.2s ease;
-        }
-        .message:hover .arrow {
-            color: #ff3b6f;
-        }
         .no-messages {
             color: #555;
             font-size: 18px;
             text-align: center;
             padding: 20px;
             background-color: #f9f9f9;
-            border: 2px dashed tomato; /* Borde de no mensajes */
+            border: 2 dashed tomato; /* Borde de no mensajes */
             border-radius: 10px;
             margin-bottom: 20px;
         }
-        .new-message {
-            font-weight: bold;
-            color: #007bff; /* Color azul para el texto de nuevo mensaje */
-            text-align: center;
-            margin: 20px 0;
+        .avatar {
+            width: 40px;  /* Tamaño del avatar */
+            height: 40px; /* Tamaño del avatar */
+            border-radius: 50%; /* Hace que el avatar sea redondo */
+            margin-right: 15px; /* Espacio entre el avatar y el texto */
+            background-color: #ccc; /* Color de fondo del avatar */
+            display: inline-block;
+            position: relative; /* Para posicionar el marcador */
+        }
+        .marker {
+            width: 10px;
+            height: 10px;
+            background-color: tomato; /* Color del marcador */
+            border-radius: 50%;
+            position: absolute;
+            top: -5px; /* Ajustar según sea necesario */
+            left: 15px; /* Ajustar según sea necesario */
+        }
+        .timestamp {
+            font-size: 12px; /* Tamaño de la fuente para el tiempo */
+            color: #666; /* Color del texto del tiempo */
+            margin-top: 5px; /* Espacio entre el mensaje y el tiempo */
+            text-align: center; /* Centrar el texto */
         }
     </style>
 </head>
@@ -121,6 +112,7 @@
 
             <div class="inbox" id="inboxMessages">
                 <!-- Aquí se mostrarán los mensajes si hay, o el texto de no hay mensajes -->
+                <div class="no-messages">Aún no tienes mensajes nuevos.</div>
             </div>
         </div>
 
@@ -135,50 +127,76 @@
         const sections = document.querySelectorAll('.content');
         const inboxMessages = document.getElementById('inboxMessages');
 
+        // Mensajes vacíos (sin mensajes de ejemplo)
+        let messages = []; // Sin mensajes de ejemplo
+
         // Función para mostrar los mensajes o el texto de no hay mensajes
         function displayInboxMessages() {
-            let messages = JSON.parse(localStorage.getItem('messages')) || []; // Cargar mensajes de localStorage
             inboxMessages.innerHTML = '';  // Limpiamos los mensajes
-
             if (messages.length > 0) {
-                // Mostrar contenedor de nuevo mensaje
-                const newMessageDiv = document.createElement('div');
-                newMessageDiv.classList.add('new-message');
-                newMessageDiv.innerText = `Tienes ${messages.length} nuevo(s) mensaje(s)`;
-                inboxMessages.appendChild(newMessageDiv);
-
-                messages.forEach(message => {
+                messages.forEach((message, index) => {
                     const messageDiv = document.createElement('div');
                     messageDiv.classList.add('message');
+
+                    // Crear el avatar
+                    const avatarDiv = document.createElement('div');
+                    avatarDiv.classList.add('avatar');
+
+                    // Crear el marcador
+                    const markerDiv = document.createElement('div');
+                    markerDiv.classList.add('marker');
+
+                    // Añadir el contenido del mensaje
                     messageDiv.innerHTML = `
-                        <span>${message}</span>
-                        <span class="arrow">&#10148;</span>
+                        <div style="display: flex; align-items: center;">
+                            ${avatarDiv.outerHTML}
+                            <span>Nuevo mensaje de ${message.sender}</span>
+                        </div>
+                        <div class="timestamp">${message.timestamp}</div>
+                        <span class="arrow">&rarr;</span>
                     `;
+                    
+                    // Agregar el marcador al avatar
+                    avatarDiv.appendChild(markerDiv);
+
+                    messageDiv.addEventListener('click', function() {
+                        // Eliminar el mensaje al hacer clic
+                        messages.splice(index, 1); // Elimina el mensaje de la lista
+                        displayInboxMessages(); // Vuelve a mostrar los mensajes
+                        // Aquí podrías agregar una navegación si es necesario
+                    });
                     inboxMessages.appendChild(messageDiv);
                 });
             } else {
-                inboxMessages.innerHTML = '<div class="no-messages">No hay mensajes aún.</div>';
+                const noMessagesDiv = document.createElement('div');
+                noMessagesDiv.classList.add('no-messages');
+                noMessagesDiv.innerText = "Aún no tienes mensajes nuevos.";
+                inboxMessages.appendChild(noMessagesDiv);
             }
         }
 
-        // Manejamos la navegación entre secciones
+        // Agregar event listeners a los enlaces del menú
         menuLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                sections.forEach(section => section.style.display = 'none');
-                const target = this.getAttribute('href').substring(1);
-                document.getElementById(target).style.display = 'block';
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = e.target.getAttribute('href').substring(1);
+                sections.forEach(section => {
+                    section.style.display = 'none'; // Ocultar todas las secciones
+                });
+                document.getElementById(target).style.display = 'block'; // Mostrar la sección seleccionada
 
+                // Si se selecciona la sección de Inbox, mostrar los mensajes
                 if (target === 'inbox') {
-                    displayInboxMessages(); // Mostrar mensajes cuando se accede a la bandeja de entrada
+                    displayInboxMessages();
                 }
             });
         });
 
-        // Cargar mensajes al inicio si estamos en el inbox
-        if (window.location.hash === '#inbox') {
-            displayInboxMessages();
-        }
+        // Mostrar la sección de Inbox al cargar
+        document.getElementById('inbox').style.display = 'block';
+        displayInboxMessages();
     </script>
+
 </body>
 </html>
 
